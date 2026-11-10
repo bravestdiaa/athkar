@@ -1,7 +1,7 @@
 {
-  "name": "أذكار الصباح والمساء - Amiri",
-  "short_name": "أذكار Amiri",
-  "start_url": "./?app=amiri",
+  "name": "أذكار الصباح والمساء",
+  "short_name": "الأذكار",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "dir": "rtl",

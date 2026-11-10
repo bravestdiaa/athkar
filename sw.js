@@ -1,5 +1,5 @@
-const C='azkar-amiri-v1';
-const FONT_CACHE='azkar-amiri-fonts';
+const C='athkar-v2';
+const FONT_CACHE='athkar-fonts';
 const FILES=['./','./index.html','./manifest.json','./icons/icon-192.png','./icons/icon-512.png'];
 const FONT_CSS='https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&display=swap';
 const KEEP=new Set([C,FONT_CACHE,'azkar-flags']);
@@ -62,8 +62,8 @@ async function maybeNotify(){
   const key=now.toDateString()+'-'+slot;
   const c=await caches.open('azkar-flags');
   if(await c.match(key)) return;
-  await self.registration.showNotification('أذكار الصباح والمساء - Amiri',{body:'أذكار الصباح والمساء',icon:'icons/icon-192.png',badge:'icons/icon-192.png',silent:true,tag:'azkar-amiri-'+slot});
+  await self.registration.showNotification('أذكار الصباح والمساء',{body:'أذكار الصباح والمساء',icon:'icons/icon-192.png',badge:'icons/icon-192.png',silent:true,tag:'athkar-'+slot});
   await c.put(key,new Response('1'));
 }
 self.addEventListener('periodicsync',e=>{ if(e.tag==='azkar-reminder') e.waitUntil(maybeNotify()); });
-self.addEventListener('notificationclick',e=>{ e.notification.close(); e.waitUntil(clients.openWindow('./?app=amiri')); });
+self.addEventListener('notificationclick',e=>{ e.notification.close(); e.waitUntil(clients.openWindow('./')); });
