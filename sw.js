@@ -1,4 +1,4 @@
-const C='athkar-v4';
+const C='athkar-v5';
 const FONT_CACHE='athkar-fonts';
 const FILES=['./','./index.html','./manifest.json','./icons/icon-192.png','./icons/icon-512.png'];
 const FONT_CSS='https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&display=swap';
@@ -6,6 +6,15 @@ const KEEP=new Set([C,FONT_CACHE,'azkar-flags']);
 
 function isFontUrl(u){
   return u.hostname==='fonts.googleapis.com' || u.hostname==='fonts.gstatic.com';
+}
+function isHtmlNav(req,url){
+  if(req.mode==='navigate' || req.destination==='document') return true;
+  if(url.origin!==self.location.origin) return false;
+  const p=url.pathname;
+  return p.endsWith('/index.html') || p.endsWith('/') || /(?:^|\/)index\.html$/.test(p);
+}
+function isSwScript(url){
+  return url.origin===self.location.origin && /(?:^|\/)sw\.js$/.test(url.pathname);
 }
 
 async function precacheFonts(){
@@ -23,6 +32,36 @@ async function precacheFonts(){
   }));
 }
 
+async function networkFirstHtml(req){
+  const cache=await caches.open(C);
+  try{
+    const res=await fetch(req,{cache:'no-store'});
+    if(res && res.ok){
+      cache.put(req,res.clone());
+      if((res.headers.get('content-type')||'').includes('text/html')){
+        cache.put(new Request('./index.html'),res.clone());
+        cache.put(new Request('./'),res.clone());
+      }
+    }
+    return res;
+  }catch(e){
+    return (await cache.match(req)) || (await cache.match('./index.html')) || (await cache.match('./'));
+  }
+}
+
+async function staleWhileRevalidate(req){
+  const cache=await caches.open(C);
+  const cached=await cache.match(req);
+  const net=fetch(req).then(res=>{
+    if(res && res.ok) cache.put(req,res.clone());
+    return res;
+  }).catch(()=>undefined);
+  if(cached){ net.catch(()=>{}); return cached; }
+  const res=await net;
+  if(res) return res;
+  throw new Error('offline');
+}
+
 self.addEventListener('install',e=>{
   e.waitUntil(Promise.all([
     caches.open(C).then(c=>c.addAll(FILES)),
@@ -35,6 +74,7 @@ self.addEventListener('activate',e=>{
 });
 
 self.addEventListener('fetch',e=>{
+  if(e.request.method!=='GET') return;
   const url=new URL(e.request.url);
   if(isFontUrl(url)){
     e.respondWith(caches.open(FONT_CACHE).then(c=>c.match(e.request).then(cached=>{
@@ -46,11 +86,13 @@ self.addEventListener('fetch',e=>{
     })));
     return;
   }
-  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
-    const cp=res.clone();
-    caches.open(C).then(c=>c.put(e.request,cp));
-    return res;
-  }).catch(()=>e.request.mode==='navigate'?caches.match('./index.html'):Promise.reject(e.request))));
+  if(url.origin!==self.location.origin) return;
+  if(isSwScript(url)) return;
+  if(isHtmlNav(e.request,url)){
+    e.respondWith(networkFirstHtml(e.request));
+    return;
+  }
+  e.respondWith(staleWhileRevalidate(e.request));
 });
 
 // إشعار صامت مرة واحدة في كل فترة
