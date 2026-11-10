@@ -29,7 +29,7 @@ h1{margin:0;font-size:1.4rem}
 .progress{height:8px;background:#e5e7eb;border-radius:8px;overflow:hidden;margin-bottom:6px}
 .progress div{height:100%;background:#10b981;width:0;transition:width .3s}
 .meta{text-align:center;font-size:.9rem;color:#6b7280;margin-bottom:10px}
-.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);min-height:220px;white-space:pre-line;font-family:'Amiri',serif;font-size:1.4rem;font-weight:700;line-height:2.35;text-align:center}
+.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);min-height:220px;white-space:pre-line;font-family:'Amiri',serif;font-size:1.6rem;font-weight:700;line-height:2.2;text-align:center}
 .card.done{font-family:'Cairo',sans-serif;font-weight:700;line-height:1.6}
 .counter{margin:4px auto 14px;width:180px;height:56px;border-radius:12px;border:0;background:#10b981;color:#fff;font-family:inherit;font-size:1.6rem;font-weight:700;display:block;box-shadow:0 4px 0 #0a8a60,0 6px 10px rgba(0,0,0,.2)}
 .counter:active{transform:translateY(4px);box-shadow:0 2px 0 #0a8a60,0 4px 8px rgba(0,0,0,.2)}
@@ -38,9 +38,10 @@ h1{margin:0;font-size:1.4rem}
 .counter:active{transform:scale(.96)}
 .nav{display:flex;justify-content:space-between}
 .nav button{font-family:inherit;font-size:.9rem;border:0;border-radius:10px;padding:5px 13px;background:#e5e7eb;font-weight:700}
-.card.quran{font-size:1.4rem;font-weight:700;line-height:2.35}
-.card.quran.kursi{font-size:1.15rem;line-height:2.3}
-.card.quran.small{font-size:1.05rem;line-height:2.2}
+.card.quran{font-size:1.6rem;font-weight:700;line-height:2.2}
+.card.quran.kursi{font-size:1.25rem;line-height:2.25}
+.card.quran.small{font-size:1.15rem;line-height:2.2}
+.card.amsayna{font-size:1.3rem;line-height:2.3}
 .sname{text-align:center;color:#059669;font-weight:700;font-size:.8rem;margin:-6px 0 8px}
 .isti{display:block;font-size:.8rem;font-weight:700;color:#6b7280}
 #installBtn2{background:transparent;box-shadow:none;color:#8b5a2b;font-size:.75rem;font-weight:700;text-decoration:underline;padding:6px 10px;white-space:nowrap}
@@ -264,7 +265,8 @@ const AZKAR={
   },
   {
    "t": "امسينا وامسى الملك لله ، والحمد لله ، لا إله إلا الله وحده لا شريك له ، له الملك وله الحمد وهو على كل شئ قدير ، رب أسألك خير مافي هذه الليلة وخير مابعدها ،وأعوذ بك من شر هذه الليلة ، وشر ما بعدها ، رب أعوذ بك من الكسل وسوء الكبر ، رب أعوذ بك من عذاب في النار ، وعذاب في القبر .",
-   "c": 1
+   "c": 1,
+   "cls": "amsayna"
   },
   {
    "t": "امسينا على فطرة الإسلام ، وعلى كلمة الإخلاص ، وعلى دين نبينا محمد وعلى ملة أبينا إبراهيم حنيفا مسلما وما كان من المشركين .",
@@ -374,7 +376,7 @@ function render(){
   const tEl=document.getElementById('text');
   if(z.t.startsWith(IST)){ tEl.textContent=z.t.slice(IST.length).replace(/^\s+/,''); const sp=document.createElement('span'); sp.className='isti'; sp.textContent=IST; tEl.prepend(sp); }
   else tEl.textContent=z.t;
-  document.getElementById('text').className='card'+(z.n?' quran':'')+(z.n==='أواخر سورة البقرة'?' small':'')+(z.n==='آية الكرسي'?' kursi':'');
+  document.getElementById('text').className='card'+(z.n?' quran':'')+(z.n==='أواخر سورة البقرة'?' small':'')+(z.n==='آية الكرسي'?' kursi':'')+(z.cls?' '+z.cls:'');
   document.getElementById('sname').textContent=z.n||'';
   document.getElementById('installBtn2').style.display=isStandalone()?'none':'';
   document.getElementById('counter').textContent=z.c-state.count;
