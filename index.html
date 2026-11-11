@@ -498,7 +498,12 @@
         // بدء التطبيق عند تحميل الصفحة
         window.onload = () => {
             initProgress();
-            switchCategory('morning'); // الافتراضي هو الصباح
+            // من العصر لحد 11:59 بالليل يفتح على المساء، وباقي اليوم على الصباح
+            // وقت العصر تقريبي لكل شهر بتوقيت القاهرة (بالدقايق من نص الليل)
+            const asrByMonth = [15*60+5, 15*60+25, 15*60+35, 15*60+30, 16*60+40, 16*60+50, 16*60+50, 16*60+40, 16*60+15, 15*60+40, 14*60+45, 14*60+40];
+            const now = new Date();
+            const mins = now.getHours()*60 + now.getMinutes();
+            switchCategory(mins >= asrByMonth[now.getMonth()] ? 'evening' : 'morning');
             initPWA(); // تشغيل إعدادات التثبيت
             keepScreenOn();
         };
