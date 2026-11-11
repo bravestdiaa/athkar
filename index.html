@@ -435,7 +435,6 @@ function tap(step){
   if(state.index>=list.length) return;
   const z=list[state.index];
   state.count=Math.min(z.c,state.count+(step||1));
-  if(navigator.vibrate) navigator.vibrate(30);
   const cEl=document.getElementById('counter');
   if(cEl) cEl.textContent=String(z.c-state.count);
   updateTapBar(z.c,state.count,true);
