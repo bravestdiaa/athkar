@@ -307,15 +307,19 @@ const AZKAR={
 };
 
 // ===== 2) اختيار الأذكار حسب ساعة الموبايل =====
-function periodByClock(){ return new Date().getHours()<15 ? 'morning' : 'evening'; }
+// من العصر لحد 11:59 بالليل مساء، وباقي اليوم صباح (وقت العصر تقريبي لكل شهر بتوقيت القاهرة)
+const ASR_BY_MONTH=[15*60+5,15*60+25,15*60+35,15*60+30,16*60+40,16*60+50,16*60+50,16*60+40,16*60+15,15*60+40,14*60+45,14*60+40];
+function periodByClock(){ const d=new Date(); return (d.getHours()*60+d.getMinutes())>=ASR_BY_MONTH[d.getMonth()] ? 'evening' : 'morning'; }
 function todayKey(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
 
 // ===== 3) حفظ مكان التوقف في localStorage =====
-const KEY='azkar_progress';
+const KEY='athkar-progress-v2'; // كل ورد (صباح/مساء) محفوظ لوحده بتاريخ النهارده
 let state={type:'morning',index:0,count:0};
-function save(){ localStorage.setItem(KEY,JSON.stringify({...state,date:todayKey(),finished:false})); }
-function markFinished(){ localStorage.setItem(KEY,JSON.stringify({...state,date:todayKey(),finished:true})); }
-function loadSaved(){ try{return JSON.parse(localStorage.getItem(KEY));}catch(e){return null;} }
+function loadAll(){ try{ const o=JSON.parse(localStorage.getItem(KEY))||{}; return (o&&typeof o==='object')?o:{}; }catch(e){ return {}; } }
+function writeType(type,obj){ const all=loadAll(); all[type]=obj; try{ localStorage.setItem(KEY,JSON.stringify(all)); }catch(e){} }
+function save(){ writeType(state.type,{index:state.index,count:state.count,date:todayKey(),finished:false}); }
+function markFinished(){ writeType(state.type,{index:state.index,count:state.count,date:todayKey(),finished:true}); }
+function loadSaved(type){ const s=loadAll()[type]; return (s && s.date===todayKey()) ? s : null; }
 
 
 const TAP_BAR_SEG_MAX=33;
@@ -425,7 +429,7 @@ function tap(step){
     setAdvancing(true);
     const nextIndex=state.index+1;
     if(nextIndex>=list.length) markFinished();
-    else localStorage.setItem(KEY,JSON.stringify({type:state.type,index:nextIndex,count:0,date:todayKey(),finished:false}));
+    else writeType(state.type,{index:nextIndex,count:0,date:todayKey(),finished:false});
     setTimeout(function(){
       fadeSwap(function(){
         state.index=nextIndex;
@@ -445,7 +449,27 @@ function go(d){
 const mainHTML=document.getElementById('main').innerHTML;
 function switchTo(type){
   if(advancing) return;
-  document.getElementById('main').innerHTML=mainHTML; state={type,index:0,count:0}; render();
+  enterType(type);
+}
+// أول دخول لكل ورد في الفتحة دي: لو بدأ فيه النهارده ومخلصهوش يسأل يكمل ولا يبدأ من جديد
+const enteredThisSession={};
+function enterType(type){
+  document.getElementById('main').innerHTML=mainHTML;
+  const s=loadSaved(type);
+  const partial=s && !s.finished && (s.index>0||s.count>0);
+  const first=!enteredThisSession[type]; enteredThisSession[type]=true;
+  document.getElementById('resumeModal').classList.remove('show');
+  if(partial){
+    state={type,index:s.index,count:s.count}; render();
+    if(first){
+      document.getElementById('resumeMsg').innerHTML='لم تكمل قراءة '+(type==='morning'?'أذكار الصباح':'أذكار المساء')+' في المرة السابقة.<br>هل تريد البدء من مكان ما توقفت، أم البدء من جديد؟';
+      document.getElementById('resumeModal').classList.add('show');
+    }
+  }else if(s && s.finished && !first){
+    state={type,index:AZKAR[type].length,count:0}; render();
+  }else{
+    state={type,index:0,count:0}; render();
+  }
 }
 
 function exitApp(){
@@ -483,17 +507,12 @@ document.addEventListener('click',function once(){ document.removeEventListener(
 let pending=null;
 function resumeChoice(yes){
   document.getElementById('resumeModal').classList.remove('show');
-  if(yes){ state={type:pending.type,index:pending.index,count:pending.count}; render(); }
-  else switchTo(periodByClock());
+  if(!yes){ document.getElementById('main').innerHTML=mainHTML; state={type:state.type,index:0,count:0}; render(); }
 }
 
 (function start(){
-  const type=periodByClock();
-  const s=loadSaved();
-  if(s && !s.finished && s.date===todayKey() && s.type===type && (s.index>0||s.count>0)){
-    pending=s; state.type=type; render();
-    document.getElementById('resumeModal').classList.add('show');
-  } else switchTo(type);
+  try{ localStorage.removeItem('azkar_progress'); }catch(e){}
+  enterType(periodByClock());
 })();
 
 // ===== 1) منع إطفاء الشاشة =====
