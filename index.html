@@ -101,10 +101,8 @@
         .rep-pill{align-self:flex-start;margin-top:-.35rem}
         .rep-bar{position:absolute;z-index:1;right:2rem;left:0;top:calc(1rem + 2rem - 2.5px);display:flex;flex-direction:row;gap:3px;height:5px}
         .rep-seg{flex:1;background:#e5e7eb;border-radius:3px;overflow:hidden;display:flex;justify-content:flex-start}
-        .rep-fill{position:relative;overflow:hidden;height:100%;width:0;background:linear-gradient(180deg,#bfdbfe 0%,#7cb6fb 55%,#60a5fa 100%);box-shadow:0 0 4px rgba(96,165,250,.55);border-radius:3px;transition:width .4s ease}
-        .rep-fill::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);animation:repShine 2.6s ease-in-out infinite}
-        @keyframes repShine{0%{left:-40%}60%,100%{left:110%}}
-        .rep-sub{position:absolute;left:0;top:calc(1rem + 2rem + 8px);width:auto}
+        .rep-fill{position:relative;overflow:hidden;height:100%;width:0;background:#7cb6fb;border-radius:3px;transition:width .4s ease}
+        .rep-sub{margin-top:1rem;text-align:center}
     </style>
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#1b4332">
@@ -310,9 +308,9 @@
                                 <div class="text-gray-500 font-bold bg-gray-100 px-4 py-1 rounded-full text-sm">
                                     التكرار: ${dhikr.target}
                                 </div>
+                                ${dhikr.target === 100 ? `<div class="rep-sub text-gray-400 font-bold text-xs">التكرار 10</div>` : ''}
                             </div>
                             ${repBarHtml(dhikr, currentCount)}
-                            ${dhikr.target === 100 ? `<div class="rep-sub text-gray-400 font-bold text-xs">التكرار 10</div>` : ''}
                         </div>
                     </div>
                 `;
@@ -422,7 +420,7 @@
                 currentTotal += progress[currentCategory][dhikr.id];
             });
             
-            const percentage = Math.round((currentTotal / totalTargets) * 100);
+            const percentage = currentTotal >= totalTargets ? 100 : Math.min(99, Math.floor((currentTotal / totalTargets) * 100));
             
             document.getElementById('progress-bar').style.width = `${percentage}%`;
             document.getElementById('progress-text').innerText = `${percentage}%`;
