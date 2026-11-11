@@ -103,24 +103,7 @@ body.advancing .counter,body.advancing .plus10{pointer-events:none}
 
 <script>
 if('serviceWorker' in navigator){
-  window.addEventListener('load',function(){
-    setTimeout(function(){ try{ sessionStorage.removeItem('athkar-sw-reloading'); }catch(e){} },1500);
-    navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(function(reg){
-      function check(){ try{ reg.update(); }catch(e){} }
-      check();
-      document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') check(); });
-    });
-  });
-  navigator.serviceWorker.addEventListener('controllerchange',function(){
-    function go(){
-      try{ if(sessionStorage.getItem('athkar-sw-reloading')) return; sessionStorage.setItem('athkar-sw-reloading','1'); }catch(e){}
-      location.reload();
-    }
-    try{ if(sessionStorage.getItem('athkar-sw-reloading')) return; }catch(e){}
-    if(typeof advancing==='boolean' && advancing){
-      var n=0,t=setInterval(function(){ n++; if(!advancing||n>40){ clearInterval(t); go(); } },200);
-    }else go();
-  });
+  window.addEventListener('load',function(){ navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(function(){}); });
 }
 
 const AZKAR={
