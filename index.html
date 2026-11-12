@@ -67,7 +67,7 @@ h1{margin:0;font-size:1.4rem}
 body.advancing .counter,body.advancing .plus10{pointer-events:none}
 #landing{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;padding:24px;padding-bottom:calc(24px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#fffdf7,#f3f4f6)}
 #landing.hide{display:none}
-.l-ayah{max-width:520px;text-align:center;font-family:'Amiri',serif;font-weight:700;font-size:1.75rem;line-height:2.1;color:#065f46}
+.l-ayah{max-width:520px;text-align:center;font-family:'Amiri',serif;font-weight:700;font-size:2.05rem;line-height:2.1;color:#065f46}
 .l-isti{display:block;font-size:1.1rem;color:#6b7280;margin-bottom:6px}
 .l-ayah small{display:block;font-family:'Cairo',sans-serif;font-weight:400;font-size:.85rem;color:#6b7280;margin-top:4px}
 .l-btns{display:flex;flex-direction:column;gap:20px;width:100%;max-width:380px}
@@ -76,10 +76,10 @@ body.advancing .counter,body.advancing .plus10{pointer-events:none}
 .l-m{background:linear-gradient(135deg,#fde68a,#fdba74);color:#7c2d12;box-shadow:0 4px 0 #f59e0b,0 8px 16px rgba(0,0,0,.12)}
 .l-e{background:linear-gradient(135deg,#1e3a8a,#4c1d95);color:#fff;box-shadow:0 4px 0 #1e1b4b,0 8px 16px rgba(0,0,0,.25)}
 header{position:relative}
-#homeBtn{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:50%;background:rgba(255,255,255,.22);display:none;align-items:center;justify-content:center;padding:0;cursor:pointer}
+#homeBtn{width:40px;height:34px;border:0;border-radius:10px;background:#e5e7eb;display:none;align-items:center;justify-content:center;padding:0;cursor:pointer}
 #homeBtn.show{display:flex}
-#homeBtn:active{background:rgba(255,255,255,.4)}
-#homeBtn svg{width:22px;height:22px;fill:#fff}
+#homeBtn:active{background:#d1d5db}
+#homeBtn svg{width:22px;height:22px;fill:#374151}
 .box .homeLink{display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;color:#6b7280;font-size:.95rem;margin-top:6px}
 .homeLink svg{width:18px;height:18px;fill:#6b7280}
 </style>
@@ -93,7 +93,6 @@ header{position:relative}
   </div>
 </div>
 <header id="hdr" class="morning">
-  <button id="homeBtn" onclick="goHome()" aria-label="الرئيسية"><svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg></button>
   <h1 id="title">أذكار الصباح</h1>
 </header>
 <div class="wrap">
@@ -107,6 +106,7 @@ header{position:relative}
     <button class="counter" id="counter" onclick="tap()"></button>
     <button class="plus10" id="plus10" onclick="tap(10)">+10</button>
     <div class="nav">
+      <button id="homeBtn" onclick="goHome()" aria-label="الرئيسية"><svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg></button>
       <button id="prevBtn" onclick="go(-1)">السابق</button>
       <button id="installBtn2" onclick="installApp()">تثبيت التطبيق على الهاتف</button>
       <button id="nextBtn" onclick="go(1)">التالي</button>
@@ -414,7 +414,7 @@ function render(){
   document.getElementById('rep').textContent='التكرار: '+(W[z.c]||z.c+' مرات');
   document.getElementById('plus10').style.display=z.c>=100?'block':'none';
   updateTapBar(z.c,state.count,false);
-  document.getElementById('prevBtn').style.visibility=state.index===0?'hidden':'visible';
+  document.getElementById('prevBtn').style.display=state.index===0?'none':'';
   var nb=document.getElementById('nextBtn');nb.style.visibility='visible';if(state.index===list.length-1){nb.textContent='خروج';nb.style.color='#dc2626';nb.onclick=function(){markFinished();exitApp();};}else{nb.textContent='التالي';nb.style.color='';nb.onclick=function(){go(1)};}
   document.getElementById('meta').textContent='الذكر '+(state.index+1)+' من '+list.length;
   document.getElementById('bar').style.width=(state.index/list.length*100)+'%';
