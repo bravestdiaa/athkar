@@ -87,10 +87,6 @@ body.advancing .counter,body.advancing .plus10{pointer-events:none}
 </div>
 <header id="hdr" class="morning">
   <h1 id="title">أذكار الصباح</h1>
-  <div class="tabs">
-    <button id="tabM" onclick="switchTo('morning')">الصباح</button>
-    <button id="tabE" onclick="switchTo('evening')">المساء</button>
-  </div>
 </header>
 <div class="wrap">
   <div class="progress"><div id="bar"></div></div>
@@ -387,8 +383,8 @@ function render(){
   const hdr=document.getElementById('hdr');
   hdr.className=state.type;
   document.getElementById('title').textContent=state.type==='morning'?'أذكار الصباح':'أذكار المساء';
-  document.getElementById('tabM').classList.toggle('active',state.type==='morning');
-  document.getElementById('tabE').classList.toggle('active',state.type==='evening');
+  
+  
   if(state.index>=list.length){
     document.getElementById('main').innerHTML='<div class="card done">تقبّل الله منك 🤍<br>أتممت '+(state.type==='morning'?'أذكار الصباح':'أذكار المساء')+'<br><button class="counter" style="width:auto;height:auto;border-radius:12px;padding:8px 30px;font-size:1.2rem;margin-top:20px" onclick="exitApp()">خروج</button></div>';
     document.getElementById('bar').style.width='100%';
