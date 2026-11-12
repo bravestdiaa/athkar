@@ -1,4 +1,4 @@
-const C='athkar-v18';
+const C='athkar-v19';
 const FONT_CACHE='athkar-fonts';
 const FILES=['./','./index.html','./manifest.json','./icons/icon-192.png','./icons/icon-512.png'];
 const FONT_CSS='https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&display=swap';
